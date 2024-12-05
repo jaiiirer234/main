@@ -20,7 +20,7 @@ router.post('/generate-pdf', async (req, res) => {
         const getPdfBuffer = await getpdfBuffer(data);
 
         // Define the output file path
-        const outputFilePath = 'C:/Users/user/Desktop/New-Test/PdfOutput.pdf';
+        const outputFilePath = `C:/Users/user/Desktop/New-Test/PdfOutput.pdf`;
         
         // Write the buffer to the file
         fs.writeFileSync(outputFilePath, getPdfBuffer);
