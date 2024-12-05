@@ -12,26 +12,35 @@ router.get('/get', (req,res)=>{
 })
 
 
-router.post('/generate-pdf', async (req,res)=>{
+router.post('/generate-pdf', async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
 
-        const getPdfBuffer = await getpdfBuffer(data)
+        // Generate the PDF buffer
+        const getPdfBuffer = await getpdfBuffer(data);
 
-        const outputFilePath = 'C:/Users/user/Desktop/Machine Test/PdfOutput.pdf'
-        fs.writeFileSync(outputFilePath,getPdfBuffer)
+        // Define the output file path
+        const outputFilePath = 'C:/Users/user/Desktop/New-Test/PdfOutput.pdf';
+        
+        // Write the buffer to the file
+        fs.writeFileSync(outputFilePath, getPdfBuffer);
 
-        res.status(201).sendFile(outputFilePath,(error)=>{
-            if(!error){
-                res.status(200).send('Generated Successfully')
-            }else{
-                console.log('Error creating the file',error)
-                res.status(500).send({error:"Failed to create PDF."})
+        // Send the file to the client
+        res.sendFile(outputFilePath, (error) => {
+            if (error) {
+                console.error('Error sending the file:', error);
+                // Only log the error; the response is already sent or cannot be modified.
+            } else {
+                console.log('PDF sent successfully');
             }
-        })
+        });
     } catch (error) {
-        console.log("error===========>",error)
-        res.status(500).send({Error:'Failed to generate PDF'})
+        console.error('Error generating PDF:', error);
+        // Ensure this error handler is not called after res.sendFile to avoid conflicts
+        if (!res.headersSent) {
+            res.status(500).send({ error: 'Failed to generate PDF.' });
+        }
     }
-})
+});
+
 module.exports = router
